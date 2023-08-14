@@ -1,4 +1,11 @@
-import { HStack, List, ListItem, Image, Button } from "@chakra-ui/react";
+import {
+  HStack,
+  List,
+  ListItem,
+  Image,
+  Button,
+  Heading,
+} from "@chakra-ui/react";
 import useGenres, { Genre } from "../hooks/useGenres";
 import getCroppedImage from "../service/image-url";
 import GenreSkeleton from "./GenreSkeleton";
@@ -20,34 +27,42 @@ const GenreList = ({ selectedGenre, onSelectGenre }: Props) => {
   if (error) return null;
 
   return (
-    <List>
-      {isLoading &&
-        skeletons.map((skeleton) => (
-          <ListItem key={skeleton}>
-            <GenreSkeleton />
+    <>
+      <Heading fontSize={"2xl"} marginY={3}>
+        Genres
+      </Heading>
+      <List>
+        {isLoading &&
+          skeletons.map((skeleton) => (
+            <ListItem key={skeleton}>
+              <GenreSkeleton />
+            </ListItem>
+          ))}
+
+        {data.map((genre) => (
+          <ListItem key={genre.id} paddingY={"10px"}>
+            <HStack>
+              <Image
+                boxSize={"32px"}
+                borderRadius={8}
+                src={getCroppedImage(genre.image_background)}
+              />
+              <Button
+                whiteSpace={"normal"}
+                objectFit={"cover"}
+                textAlign={"left"}
+                onClick={() => onSelectGenre(genre)}
+                fontSize={"lg"}
+                {...(genre.id === selectedGenre?.id ? highlight : null)}
+                variant={"link"}
+              >
+                {genre.name}
+              </Button>
+            </HStack>
           </ListItem>
         ))}
-
-      {data.map((genre) => (
-        <ListItem key={genre.id} paddingY={"10px"}>
-          <HStack>
-            <Image
-              boxSize={"32px"}
-              borderRadius={8}
-              src={getCroppedImage(genre.image_background)}
-            />
-            <Button
-              onClick={() => onSelectGenre(genre)}
-              fontSize={"lg"}
-              {...(genre.id === selectedGenre?.id ? highlight : null)}
-              variant={"link"}
-            >
-              {genre.name}
-            </Button>
-          </HStack>
-        </ListItem>
-      ))}
-    </List>
+      </List>
+    </>
   );
 };
 
